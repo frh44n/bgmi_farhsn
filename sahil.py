@@ -1,5 +1,5 @@
 import time
-import flask import Flask
+from flask import Flask
 import requests
 import logging
 from threading import Thread
