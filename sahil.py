@@ -280,4 +280,33 @@ if __name__ == '__main__':
     loop = asyncio.new_event_loop()
     thread = Thread(target=start_asyncio_thread)
     thread.start()
-    bot.polling()
+    # Webhook route to receive updates
+@app.route('/' + BOT_TOKEN, methods=['POST'])
+def receive_update():
+    json_str = request.get_data(as_text=True)
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '!', 200
+
+# Set webhook
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+    success = bot.set_webhook(url=WEBHOOK_URL + BOT_TOKEN)
+    if success:
+        return "Webhook set successfully!", 200
+    else:
+        return "Failed to set webhook.", 500
+
+# Remove webhook
+@app.route('/remove_webhook', methods=['GET', 'POST'])
+def remove_webhook():
+    success = bot.remove_webhook()
+    if success:
+        return "Webhook removed successfully!", 200
+    else:
+        return "Failed to remove webhook.", 500
+
+# Start the Flask app
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
