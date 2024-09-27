@@ -275,13 +275,7 @@ def echo_message(message):
     except Exception as e:
         logging.error(f"Error in echo_message: {e}")
 
-# Start the bot
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    loop = asyncio.new_event_loop()
-    thread = Thread(target=start_asyncio_thread)
-    thread.start()
-    # Webhook route to receive updates
+# Webhook route to receive updates
 @app.route('/' + BOT_TOKEN, methods=['POST'])
 def receive_update():
     json_str = request.get_data(as_text=True)
@@ -310,4 +304,6 @@ def remove_webhook():
 # Start the Flask app
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+    # Use a default port if not provided in the environment
+    port = 5000
+    app.run(host="0.0.0.0", port=port)
